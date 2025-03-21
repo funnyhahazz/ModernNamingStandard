@@ -18,10 +18,10 @@ local function test(name, aliases, callback)
 
 	task.spawn(function()
 		if not callback then
-			print("⏺️ " .. name)
+			warn("⏺️ " .. name .. " failed to be tested.")
 		elseif not getGlobal(name) then
 			fails += 1
-			warn("⛔ " .. name)
+			error("⛔ " .. name)
 		else
 			local success, message = pcall(callback)
 	
@@ -30,7 +30,7 @@ local function test(name, aliases, callback)
 				print("✅ " .. name .. (message and " • " .. message or ""))
 			else
 				fails += 1
-				warn("⛔ " .. name .. " failed: " .. message)
+				error("⛔ " .. name .. " failed: " .. message)
 			end
 		end
 	
@@ -55,7 +55,7 @@ end
 
 print("\n")
 
-print("UNC Environment Check")
+print("Modern Naming Standard Environment Test")
 print("✅ - Pass, ⛔ - Fail, ⏺️ - No test, ⚠️ - Missing aliases\n")
 
 task.defer(function()
@@ -66,10 +66,11 @@ task.defer(function()
 
 	print("\n")
 
-	print("UNC Summary")
+	print("Test Summary")
 	print("✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ")")
 	print("⛔ " .. fails .. " tests failed")
 	print("⚠️ " .. undefined .. " globals are missing aliases")
+        print("Tested on: " .. os.date)
 end)
 
 -- Cache
@@ -160,10 +161,9 @@ test("clonefunction", {}, function()
 	assert(test ~= copy, "The clone should not be equal to the original")
 end)
 
-test("getcallingscript", {})
 
 test("getscriptclosure", {"getscriptfunction"}, function()
-	local module = game:GetService("CoreGui").RobloxGui.Modules.Common.Constants
+	local module = game:GetService("CoreGui").RobloxGui.Modules.UIManager.Constants
 	local constants = getrenv().require(module)
 	local generated = getscriptclosure(module)()
 	assert(constants ~= generated, "Generated module should not match the original")
